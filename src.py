@@ -1,8 +1,14 @@
 import platform,socket,json,psutil,logging
 from constants import *
-import json
+import torch
 import cv2
+import numpy as np
 import os
+import glob as glob
+import json
+from config import (
+    CLASSES, RESIZE_TO, TRAIN_DIR, VALID_DIR, BATCH_SIZE
+)
 
 
 def video_to_img(video_path, dest_path):
@@ -85,3 +91,56 @@ def make_video_from_dataloader(video_name, dataloader ):
         # Add image to video
         out.write(image)
 
+def checkBbox(idx):
+    dir_path = "/home/cagnur/stroma/dataset/images/train/imgs"
+    type = dir_path.split(os.path.sep)[-2]
+    annotation_path = os.path.join(dir_path, "../../../annotations/instances_" + type + ".json")
+    image_paths = glob.glob(f"{dir_path}/*.jpg")
+    with open(annotation_path, 'r') as f:
+        all_json = json.load(f)
+        all_annotations = all_json['annotations']
+
+    all_images = [image_path.split(os.path.sep)[-1] for image_path in image_paths]
+    all_images = sorted(all_images)
+
+
+    image_name = all_images[idx]
+    image_path = os.path.join(dir_path, image_name)
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+    image_width = image.shape[1]
+    image_height = image.shape[0]
+    image_resized = cv2.resize(image, (RESIZE_TO, RESIZE_TO))
+    image /= 255.0
+    annotations = []
+    for annotation in all_annotations:
+        if annotation['image_id'] == idx:
+            annotations.append(annotation)
+    boxes = []
+    labels = []
+    for ann in annotations:
+        labels.append(ann['category_id'])
+        for box_num, box in enumerate([ann['bbox']]):
+            xmin = int(box[0])
+            ymin = int(box[1])
+            xmax = int(box[0]) + int(box[2])
+            ymax = int(box[1]) + int(box[3])
+            width = int(box[2])
+            height = int(box[3])
+
+
+            # xmin_final = (xmin / image_width) * self.width
+            # xmax_final = (xmax / image_width) * self.width
+            # ymin_final = (ymin / image_height) * self.height
+            # ymax_final = (ymax / image_height) * self.height
+
+            # boxes.append([xmin_final, ymin_final, xmax_final, ymax_final])
+            boxes.append([xmin, ymin, xmax, ymax])
+        for box_num, box in enumerate(boxes):
+            cv2.rectangle(image,
+                      (box[0], box[1]),
+                      (box[2], box[3]),
+                      (0, 0, 255), 2)
+        cv2.imshow('image', image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
