@@ -84,7 +84,7 @@ class CustomDataset(Dataset):
         # self.all_images = sorted(self.all_images)
         temp = []
         for ann in self.annotations:
-            valid_id = ann['image_id']
+            valid_id = ann['image_id'] - 1
             valid_id_name = str(valid_id).zfill(4) + '.jpg'
             temp.append(valid_id_name)
         self.all_images = sorted(list(dict.fromkeys(temp)))
@@ -104,7 +104,7 @@ class CustomDataset(Dataset):
         # capture the annotations
         annotations = []
         for annotation in self.annotations:
-            if annotation['image_id'] == int(image_id):
+            if annotation['image_id'] == int(image_id)+1:
                 annotations.append(annotation)
 
         boxes = []
@@ -139,7 +139,6 @@ class CustomDataset(Dataset):
         # bounding box to tensor
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         # area of the bounding boxes
-        # area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
         area = torch.as_tensor(areas, dtype=torch.int16)
         # no crowd instances
         iscrowd = torch.as_tensor((boxes.shape[0],), dtype=torch.int64)
@@ -161,7 +160,6 @@ class CustomDataset(Dataset):
             image_resized = sample['image']
             target['boxes'] = torch.Tensor(sample['bboxes'])
 
-        # print(target["boxes"].size())
         return image_resized, target
 
     def __len__(self):

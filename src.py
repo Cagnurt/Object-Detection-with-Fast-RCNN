@@ -110,11 +110,11 @@ def checkBbox(idx):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
     image_width = image.shape[1]
     image_height = image.shape[0]
-    image_resized = cv2.resize(image, (RESIZE_TO, RESIZE_TO))
+    # image_resized = cv2.resize(image, (RESIZE_TO, RESIZE_TO))
     image /= 255.0
     annotations = []
     for annotation in all_annotations:
-        if annotation['image_id'] == idx:
+        if annotation['image_id'] == idx+1:
             annotations.append(annotation)
     boxes = []
     labels = []
@@ -140,7 +140,12 @@ def checkBbox(idx):
             cv2.rectangle(image,
                       (box[0], box[1]),
                       (box[2], box[3]),
-                      (0, 0, 255), 2)
+                      (0, 0, 255), 1)
+
+            # cv2.rectangle(image,
+            #               (box[0], box[1] + 12),
+            #               (box[2], box[3] + 12),
+            #               (0, 255, 0), 1)
         cv2.imshow('image', image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
