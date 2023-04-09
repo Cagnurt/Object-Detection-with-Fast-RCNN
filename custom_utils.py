@@ -109,7 +109,7 @@ def show_tranformed_image(train_loader):
                             (0, 0, 255), 2)
                 cv2.putText(sample, CLASSES[labels[box_num]],
                             (int(box[0]), int(box[1])-10), cv2.FONT_HERSHEY_SIMPLEX,
-                            1.0, (0, 0, 255), 1)
+                            0.5, (0, 0, 255), 1)
             cv2.imshow('Transformed image', sample)
             cv2.waitKey(0)
             cv2.destroyAllWindows()

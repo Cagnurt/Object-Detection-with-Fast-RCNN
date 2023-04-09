@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # initialize the model and move to the computation device
     model = create_model(num_classes=NUM_CLASSES)
     torch.cuda.empty_cache()
-    # model = model.to(DEVICE)
+    model = model.to(DEVICE)
     # get the model parameters
     params = [p for p in model.parameters() if p.requires_grad]
     # define the optimizer
@@ -105,35 +105,35 @@ if __name__ == '__main__':
     if VISUALIZE_TRANSFORMED_IMAGES:
         from custom_utils import show_tranformed_image
         show_tranformed_image(train_loader)
-        show_tranformed_image(train_loader)
-        show_tranformed_image(train_loader)
-        show_tranformed_image(train_loader)
-        show_tranformed_image(train_loader)
-    # # initialize SaveBestModel class
-    # save_best_model = SaveBestModel()
-    # # start the training epochs
-    # for epoch in range(NUM_EPOCHS):
-    #     print(f"\nEPOCH {epoch + 1} of {NUM_EPOCHS}")
-    #     # reset the training and validation loss histories for the current epoch
-    #     train_loss_hist.reset()
-    #     val_loss_hist.reset()
-    #     # start timer and carry out training and validation
-    #     start = time.time()
-    #     train_loss = train(train_loader, model)
-    #     val_loss = validate(valid_loader, model)
-    #     print(f"Epoch #{epoch + 1} train loss: {train_loss_hist.value:.3f}")
-    #     print(f"Epoch #{epoch + 1} validation loss: {val_loss_hist.value:.3f}")
-    #     end = time.time()
-    #     print(f"Took {((end - start) / 60):.3f} minutes for epoch {epoch}")
-    #     # save the best model till now if we have the least loss in the...
-    #     # ... current epoch
-    #     save_best_model(
-    #         val_loss_hist.value, epoch, model, optimizer
-    #     )
-    #     # save the current epoch model
-    #     save_model(epoch, model, optimizer)
-    #     # save loss plot
-    #     save_loss_plot(OUT_DIR, train_loss, val_loss)
-    #
-    #     # sleep for 5 seconds after each epoch
-    #     time.sleep(5)
+        # show_tranformed_image(train_loader)
+        # show_tranformed_image(train_loader)
+        # show_tranformed_image(train_loader)
+        # show_tranformed_image(train_loader)
+    # initialize SaveBestModel class
+    save_best_model = SaveBestModel()
+    # start the training epochs
+    for epoch in range(NUM_EPOCHS):
+        print(f"\nEPOCH {epoch + 1} of {NUM_EPOCHS}")
+        # reset the training and validation loss histories for the current epoch
+        train_loss_hist.reset()
+        val_loss_hist.reset()
+        # start timer and carry out training and validation
+        start = time.time()
+        train_loss = train(train_loader, model)
+        val_loss = validate(valid_loader, model)
+        print(f"Epoch #{epoch + 1} train loss: {train_loss_hist.value:.3f}")
+        print(f"Epoch #{epoch + 1} validation loss: {val_loss_hist.value:.3f}")
+        end = time.time()
+        print(f"Took {((end - start) / 60):.3f} minutes for epoch {epoch}")
+        # save the best model till now if we have the least loss in the...
+        # ... current epoch
+        save_best_model(
+            val_loss_hist.value, epoch, model, optimizer
+        )
+        # save the current epoch model
+        save_model(epoch, model, optimizer)
+        # save loss plot
+        save_loss_plot(OUT_DIR, train_loss, val_loss)
+
+        # sleep for 5 seconds after each epoch
+        time.sleep(5)
