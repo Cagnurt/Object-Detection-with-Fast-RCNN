@@ -1,5 +1,4 @@
 import platform,socket,json,psutil,logging
-from constants import *
 import torch
 import cv2
 import numpy as np

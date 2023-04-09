@@ -12,6 +12,23 @@ from dataset import (
 import torch
 import matplotlib.pyplot as plt
 import time
+from GPUtil import showUtilization as gpu_usage
+from numba import cuda
+
+def free_gpu_cache():
+    print("Initial GPU Usage")
+    gpu_usage()
+
+    torch.cuda.empty_cache()
+
+    cuda.select_device(0)
+    cuda.close()
+    cuda.select_device(0)
+
+    print("GPU Usage after emptying the cache")
+    gpu_usage()
+
+
 plt.style.use('ggplot')
 from src import checkBbox
 
@@ -43,7 +60,6 @@ def train(train_data_loader, model):
         prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
     return train_loss_list
 
-
 # function for running validation iterations
 def validate(valid_data_loader, model):
     print('Validating')
@@ -72,7 +88,7 @@ def validate(valid_data_loader, model):
 
 
 if __name__ == '__main__':
-    torch.cuda.empty_cache()
+    free_gpu_cache()
     # checkBbox(2821)
     # checkBbox(3677)
     # checkBbox(5294)

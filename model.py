@@ -1,5 +1,5 @@
 from efficientnet_pytorch import EfficientNet
-from constants import IMAGE_CHANNEL_NUMBER, IMAGE_HEIGHT
+from config import IMAGE_CHANNEL_NUMBER, IMAGE_HEIGHT
 import torch.nn as nn
 import torch.nn.functional as F
 #

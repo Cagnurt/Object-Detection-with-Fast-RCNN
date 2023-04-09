@@ -25,7 +25,8 @@
 
 
 import torch
-
+VIDEO_FPS = 30
+DATASETS = ['train', 'val', 'test']
 BATCH_SIZE = 2 # increase / decrease according to GPU memeory
 RESIZE_TO = 400 # resize the image for training and transforms
 NUM_EPOCHS = 10 # number of epochs to train for
