@@ -27,9 +27,9 @@
 import torch
 
 BATCH_SIZE = 2 # increase / decrease according to GPU memeory
-RESIZE_TO = 640 # resize the image for training and transforms
+RESIZE_TO = 400 # resize the image for training and transforms
 NUM_EPOCHS = 10 # number of epochs to train for
-NUM_WORKERS = 2
+NUM_WORKERS = 4
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 print(DEVICE)
 TRAIN_DIR = '/home/cagnur/stroma/dataset/images/train/imgs'
@@ -41,7 +41,7 @@ VALID_DIR = '/home/cagnur/stroma/dataset/images/val/imgs'
 #     '__background__', '11', '9', '13', '10', '6', '7', '0', '5', '4', '2', '14',
 #     '8', '12', '1', '3'
 # ]
-CLASSES = ['dummy', 'bolt','nut']
+CLASSES = ['__background__', 'bolt','nut']
 NUM_CLASSES = len(CLASSES)
 # whether to visualize images after crearing the data loaders
 VISUALIZE_TRANSFORMED_IMAGES = True

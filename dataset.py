@@ -65,6 +65,7 @@ from custom_utils import collate_fn, get_train_transform, get_valid_transform
 # the dataset class
 class CustomDataset(Dataset):
     def __init__(self, dir_path, width, height, classes, transforms=None):
+        # TODO: Remove empty images assign as valid images
         self.transforms = transforms
         self.dir_path = dir_path
         self.height = height
@@ -79,13 +80,20 @@ class CustomDataset(Dataset):
 
         # get all the image paths in sorted order
         self.image_paths = glob.glob(f"{self.dir_path}/*.jpg")
-        self.all_images = [image_path.split(os.path.sep)[-1] for image_path in self.image_paths]
-        self.all_images = sorted(self.all_images)
+        # self.all_images = [image_path.split(os.path.sep)[-1] for image_path in self.image_paths]
+        # self.all_images = sorted(self.all_images)
+        temp = []
+        for ann in self.annotations:
+            valid_id = ann['image_id']
+            valid_id_name = str(valid_id).zfill(4) + '.jpg'
+            temp.append(valid_id_name)
+        self.all_images = sorted(list(dict.fromkeys(temp)))
 
     def __getitem__(self, idx):
         # capture the image name and the full image path
         image_name = self.all_images[idx]
         image_path = os.path.join(self.dir_path, image_name)
+        image_id = image_name.split('.')[0]
         # read the image
         image = cv2.imread(image_path)
         # convert BGR to RGB color format
@@ -94,48 +102,23 @@ class CustomDataset(Dataset):
         image_resized /= 255.0
 
         # capture the annotations
-        # annot_filename = image_name[:-4] + '.xml'
-        # annot_file_path = os.path.join(self.dir_path, annot_filename)
-
-        # print(idx)
         annotations = []
         for annotation in self.annotations:
-            if annotation['image_id'] == idx:
+            if annotation['image_id'] == int(image_id):
                 annotations.append(annotation)
 
         boxes = []
         labels = []
         areas = []
-        # tree = et.parse(annot_file_path)
-        # root = tree.getroot()
-
-
 
         # get the height and width of the image
         image_width = image.shape[1]
         image_height = image.shape[0]
 
-        # for ann in annotations:
-        #     labels.append(ann['category_id'])
-            # boxes_temp.append(ann['bbox'])
-
-        # box coordinates for xml files are extracted and corrected for image size given
-        # for member in root.findall('object'):
+        # box coordinates from coco to pascal
         for ann in annotations:
             labels.append(ann['category_id'])
             for box_num, box in enumerate([ann['bbox']]):
-                # map the current object name to `classes` list to get...
-                # ... the label index and append to `labels` list
-                # labels.append(self.classes.index(member.find('name').text))
-
-                # xmin = left corner x-coordinates
-                # xmin = int(member.find('bndbox').find('xmin').text)
-                # # xmax = right corner x-coordinates
-                # xmax = int(member.find('bndbox').find('xmax').text)
-                # # ymin = left corner y-coordinates
-                # ymin = int(member.find('bndbox').find('ymin').text)
-                # # ymax = right corner y-coordinates
-                # ymax = int(member.find('bndbox').find('ymax').text)
                 xmin = int(box[0])
                 ymin = int(box[1])
                 xmax = int(box[0])+int(box[2])
@@ -153,14 +136,13 @@ class CustomDataset(Dataset):
 
                 boxes.append([xmin_final, ymin_final, xmax_final, ymax_final])
 
-        # print("Actual boxes for " + str(idx)+":"+str(boxes))
         # bounding box to tensor
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         # area of the bounding boxes
         # area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
         area = torch.as_tensor(areas, dtype=torch.int16)
         # no crowd instances
-        # iscrowd = torch.as_tensor((boxes.shape[0],), dtype=torch.int64)
+        iscrowd = torch.as_tensor((boxes.shape[0],), dtype=torch.int64)
         # labels to tensor
         labels = torch.as_tensor(labels, dtype=torch.int64)
         # prepare the final `target` dictionary
@@ -168,7 +150,7 @@ class CustomDataset(Dataset):
         target["boxes"] = boxes
         target["labels"] = labels
         target["area"] = area
-        # target["iscrowd"] = iscrowd
+        target["iscrowd"] = iscrowd
         image_id = torch.tensor([idx])
         target["image_id"] = image_id
         # apply the image transforms
@@ -178,6 +160,8 @@ class CustomDataset(Dataset):
                                      labels=labels)
             image_resized = sample['image']
             target['boxes'] = torch.Tensor(sample['bboxes'])
+
+        # print(target["boxes"].size())
         return image_resized, target
 
     def __len__(self):

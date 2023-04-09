@@ -105,8 +105,8 @@ if __name__ == '__main__':
     if VISUALIZE_TRANSFORMED_IMAGES:
         from custom_utils import show_tranformed_image
         show_tranformed_image(train_loader)
-        # show_tranformed_image(train_loader)
-        # show_tranformed_image(train_loader)
+        show_tranformed_image(train_loader)
+        show_tranformed_image(train_loader)
     # initialize SaveBestModel class
     save_best_model = SaveBestModel()
     # start the training epochs
