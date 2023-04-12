@@ -6,28 +6,65 @@ Let’s make the problem **SMART**
 **S**pecific: The model should be able to accurately track different types of nuts and bolts, even under varying lighting conditions, and keep count of them.
 **M**easurable: Defining end-2-end pipeline with decreasing loss values over iterations for train and validation. (Because it is my first attempt to solve this problem, this success definition is meaningful. For further iteration, this part should be modified like that: maximizing accuracy subject to <0.5sec CPU inference time)
 **A**ctionable: Using simple and familiar methods for you. (since it is an initial attempt)
-**R**elevant: High accuracy for customer 
+**R**elevant: End2end runnable pipeline for customer 
 **T**ime-bound: it should be implemented in ~10h
 
-## Constraints
+## Constraint(s) and Approach to the constraint(s)
 
-Time. Other constraints such as hardware specs are not important for this first attempt as long as it can be implementable and fast enough for compilation. 
+**Time**. 
+
+Firstly, I researched which model is used in the industry: Fast RCNN according to the reference. 
+
+So, I searched whether there is any ready pipeline for Fast-RCNN. If there is, I can use in my implementation as a starting point:
+
+[https://debuggercafe.com/a-simple-pipeline-to-train-pytorch-faster-rcnn-object-detection-model/](https://debuggercafe.com/a-simple-pipeline-to-train-pytorch-faster-rcnn-object-detection-model/)
+
+This is my reference for the pipeline. 
+
+**GPU**
+
+Google Colab GPU can be used. In order to access the data from Colab, I need to update the dataset to Google Drive. 
 
 # Pipeline
 
-Although my pipeline is visualized in Figure-1, I could not fully implement this.  For example, for preparing the dataset part,  I forgot to extract images without target values.
-
 ![Figure - 1: Stroma Challange Pipeline
-](readme_imgs/pipeline.png)
+](readme_imgs/pipeline.png/pipeline.png)
 
 Figure - 1: Stroma Challange Pipeline
 
-# Result
+# Train
 
-In end2end.ipynb, I tried to convey my idea with my programming overall. Although it is not working properly now, with creating issues on GitHub, it can improve systematically.
+Dataset structure:
 
-# Challanges  
-- Reference code was for different dataset format such as Different folder structure, different annotation storing, different bounding box format. Modify them for my dataset structure.
-- Pytorch does not accept annotations if it is empty. Eliminate empty images from datasets. TODO: make it optional so that we can use same class for val and test set
-- Object and corresponding bbox does not fit well. Because there is one directional flow throughout the image, I assigned annotation to the previous image. It fits perfect now.
-- My computer's GPU could not handle well
+```bash
+├── dataset
+│   ├── annotations
+│   │   ├── instances_test.json
+│   │   ├── instances_train.json
+│   │   └── instances_val.json
+│   └── images
+│       ├── test
+│       │   ├── imgs
+│       │   └── test.mp4
+│       ├── train
+│       │   ├── imgs
+│       │   └── train.mp4
+│       └── val
+│           ├── imgs
+│           └── val.mp4
+```
+
+1. Open config.py
+2. Change paths with paths to imgs folder
+3. Open the terminal and write:
+
+```bash
+python train.py
+```
+
+# Implementation Challanges
+
+- Reference code was for different dataset formats such as Different folder structures, different annotation storing, and different bounding box formats. Modify them for my dataset structure.
+- Pytorch does not accept annotations if it is empty. Eliminate empty images from datasets.
+- The object and corresponding bbox does not fit well. Because there is a one-directional flow throughout the image, I assigned annotation to the previous image. It fits perfectly now.
+- My computer's GPU could not handle it well so I carry the dataset to my drive so that Colab can connect and use the data.
