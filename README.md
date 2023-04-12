@@ -28,7 +28,7 @@ Google Colab GPU can be used. In order to access the data from Colab, I need to 
 # Pipeline
 
 ![Figure - 1: Stroma Challange Pipeline
-](/readme_imgs/pipeline.png/pipeline.png)
+](readme_imgs/pipeline.png)
 
 Figure - 1: Stroma Challange Pipeline
 
