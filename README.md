@@ -30,4 +30,4 @@ In end2end.ipynb, I tried to convey my idea with my programming overall. Althoug
 - Reference code was for different dataset format such as Different folder structure, different annotation storing, different bounding box format. Modify them for my dataset structure.
 - Pytorch does not accept annotations if it is empty. Eliminate empty images from datasets. TODO: make it optional so that we can use same class for val and test set
 - Object and corresponding bbox does not fit well. Because there is one directional flow throughout the image, I assigned annotation to the previous image. It fits perfect now.
-  
+- My computer's GPU could not handle well

@@ -1,0 +1,11 @@
+!pip install GPUtil
+
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+TRAIN_DIR = 'drive/MyDrive/dataset/images/train/imgs'
+VALID_DIR = 'drive/MyDrive/dataset/images/val/imgs'
+
+VISUALIZE_TRANSFORMED_IMAGES = False
+

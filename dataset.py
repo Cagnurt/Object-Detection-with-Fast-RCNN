@@ -4,8 +4,6 @@ import numpy as np
 import os
 import glob as glob
 import json
-from xml.etree import ElementTree as et
-
 from config import (
     CLASSES, RESIZE_TO, TRAIN_DIR, VALID_DIR, BATCH_SIZE
 )
